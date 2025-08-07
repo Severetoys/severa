@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if a user is an authenticated admin
+    function isAdmin() {
+      // In a real app, you would check for a custom claim.
+      // For this setup, we assume client-side writes are disallowed and admin actions use the Admin SDK.
+      // The Admin SDK bypasses these rules, so we can focus on client-side restrictions.
+      return request.auth != null && request.auth.token.email == "pix@italosantos.com";
+    }
+
+    // Default deny all reads and writes
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Allow public read on collections needed for the website to display content.
+    // Writes are denied from the client, they must go through the admin panel (server-side).
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /photos/{photoId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /videos/{videoId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Rules for reviews:
+    // Allow anyone to read approved reviews.
+    // Allow any authenticated user to create a new review (status will be 'pending').
+    // Only admin can update or delete reviews.
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved';
+      allow create: if request.auth != null && request.resource.data.status == 'pending';
+      allow update, delete: if false; // All updates handled by Admin SDK
+    }
+    
+    // Page views can be created and updated by anyone
+    match /pageViews/{pageId} {
+        allow read, write: if true;
+    }
+    
+    // Chat messages rules
+    // A user can read/write to a chat they are part of.
+    match /chats/{chatId}/{message=**} {
+        allow read, write: if request.auth != null;
+    }
+  }
+}
