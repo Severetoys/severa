@@ -12,6 +12,8 @@ import { FaceIDAuthProvider } from '@/contexts/face-id-auth-context';
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+  fallback: ['system-ui', 'arial'],
 });
 
 export const metadata: Metadata = {

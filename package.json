@@ -57,6 +57,7 @@
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.44.4",
     "embla-carousel-react": "^8.1.5",
+    "firebase-admin": "^13.4.0",
     "hono": "^4.8.12",
     "lucide-react": "^0.395.0",
     "mercadopago": "^2.0.11",

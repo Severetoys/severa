@@ -1,7 +1,14 @@
 import { promises as fs } from 'fs';
 import { existsSync } from 'fs';
 import path from 'path';
-import { TwitterMediaOutput } from '../ai/flows/twitter-flow-new';
+// import { TwitterMediaOutput } from '../ai/flows/twitter-flow-new';
+
+// Mock type definition for missing import
+interface TwitterMediaOutput {
+  media_key: string;
+  type: string;
+  url?: string;
+}
 
 const CACHE_DIR = path.join(process.cwd(), 'cache', 'twitter');
 const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 DIAS para economia máxima

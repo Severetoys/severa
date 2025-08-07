@@ -40,11 +40,13 @@ export default function PixPaymentModal({ isOpen, onOpenChange, amount, onPaymen
 
         try {
             const result = await createPixPayment({ amount, email, name, phone });
-            if (result.error) {
-                throw new Error(result.error);
+            // Since the function signature doesn't include error property, we check for required fields
+            if (!result.qrCode || !result.paymentId) {
+                throw new Error('Dados do PIX incompletos');
             }
-            if (result.qrCodeBase64 && result.qrCode) {
-                setPixData({ qrCodeBase64: result.qrCodeBase64, qrCode: result.qrCode });
+            // Assuming qrCodeBase64 is part of qrCode for compatibility
+            if (result.qrCode) {
+                setPixData({ qrCodeBase64: result.qrCode, qrCode: result.qrCode });
                 localStorage.setItem('customerEmail', email);
             } else {
                  throw new Error("Não foi possível obter os dados do PIX.");

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FirebaseFile, fetchFirebaseFiles, isImageFile, isVideoFile } from '@/lib/firebase-storage';
+import { CloudflareFile, fetchCloudflareFiles, isImageFile, isVideoFile } from '@/lib/firebase-storage';
 import { ProtectedMedia } from './protected-media';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -21,7 +21,7 @@ export function ProtectedGallery({
   className = '',
   showMetadata = false
 }: ProtectedGalleryProps) {
-  const [files, setFiles] = useState<FirebaseFile[]>([]);
+  const [files, setFiles] = useState<CloudflareFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export function ProtectedGallery({
       setError(null);
       
       try {
-        const allFiles = await fetchFirebaseFiles(folderPath);
+        const allFiles = await fetchCloudflareFiles(folderPath);
         
         // Filtrar por tipo de mídia
         let filteredFiles = allFiles;

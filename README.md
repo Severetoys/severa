@@ -140,34 +140,161 @@ A aplicação segue o princípio de "negar por padrão", garantindo segurança m
 - **PIX (via Mercado Pago):** Um modal customizado permite que clientes no Brasil gerem um QR Code PIX para pagamento.
 - **PayPal:** Um botão de pagamento direciona para o checkout do PayPal para pagamentos internacionais.
 
+## 🔐 Configuração de Variáveis de Ambiente
+
+### ⚠️ **SEGURANÇA IMPORTANTE**
+Todas as credenciais sensíveis foram migradas para variáveis de ambiente. Nunca commite credenciais hardcoded no código!
+
+### 📁 **Arquivos de Ambiente**
+- `.env.example` - Exemplo com todas as variáveis necessárias
+- `.env` - Suas credenciais locais (não commitado no Git)
+- `.env.local` - Variáveis específicas do Next.js (não commitado no Git)
+
+### 🔧 **Configuração Local**
+
+1. **Copie o arquivo de exemplo:**
+```bash
+cp .env.example .env
+```
+
+2. **Edite o arquivo `.env` com suas credenciais:**
+```bash
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyC7yaXjEFWFORvyLyHh1O5SPYjRCzptTg8
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=authkit-y9vjx.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://authkit-y9vjx-default-rtdb.firebaseio.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=authkit-y9vjx
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=authkit-y9vjx.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=308487499277
+NEXT_PUBLIC_FIREBASE_APP_ID=1:308487499277:web:3fde6468b179432e9f2f44
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-XKJWPXDPZS
+
+# PayPal Configuration
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=AXykIWKfbbsR_Qe4eLrDgxudUWcoFn-cihQdgWJTqEOVQiP5fxXln-C5fr1QABQ4jowP7Oz2nkNtPFie
+NEXT_PUBLIC_PAYPAL_BUSINESS_EMAIL=pix@italosantos.com
+
+# Mercado Pago Configuration
+MERCADOPAGO_ACCESS_TOKEN=seu_access_token_aqui
+NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY=seu_public_key_aqui
+
+# Cloudflare Configuration
+CLOUDFLARE_ACCOUNT_ID=seu_account_id_aqui
+CLOUDFLARE_API_TOKEN=seu_api_token_aqui
+CLOUDFLARE_D1_DATABASE_ID=seu_database_id_aqui
+CLOUDFLARE_R2_BUCKET_NAME=seu_bucket_name_aqui
+
+# RapidAPI Configuration
+NEXT_PUBLIC_RAPIDAPI_KEY=seu_rapidapi_key_aqui
+
+# Application Configuration
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXTAUTH_SECRET=seu_nextauth_secret_super_seguro_aqui
+NEXTAUTH_URL=http://localhost:3000
+
+# GitHub Integration (opcional)
+GITHUB_PERSONAL_ACCESS_TOKEN=seu_github_token_aqui
+```
+
+### 🌐 **Configuração na Vercel**
+
+1. **Via Dashboard da Vercel:**
+   - Acesse [vercel.com/dashboard](https://vercel.com/dashboard)
+   - Selecione seu projeto
+   - Vá em **Settings** → **Environment Variables**
+   - Adicione todas as variáveis do `.env.example`
+
+2. **Via CLI da Vercel:**
+```bash
+# Instalar CLI da Vercel
+npm i -g vercel
+
+# Login e configurar projeto
+vercel login
+vercel link
+
+# Adicionar variáveis de ambiente
+vercel env add NEXT_PUBLIC_FIREBASE_API_KEY
+vercel env add NEXT_PUBLIC_PAYPAL_CLIENT_ID
+# ... adicione todas as outras variáveis
+```
+
+3. **Importar arquivo .env:**
+```bash
+# Usar o arquivo .env local como base
+vercel env pull .env.vercel
+```
+
+### ☁️ **Configuração na Cloudflare**
+
+1. **Via Dashboard da Cloudflare:**
+   - Acesse [dash.cloudflare.com](https://dash.cloudflare.com)
+   - Vá em **Workers & Pages** → Seu projeto
+   - Clique em **Settings** → **Environment variables**
+   - Adicione as variáveis em **Production** e **Preview**
+
+2. **Via wrangler.toml:**
+   - As variáveis são configuradas no dashboard, não no arquivo `wrangler.toml`
+   - O arquivo já está configurado para usar as variáveis de ambiente
+
+### 🔥 **Configuração no Firebase**
+
+1. **Firebase Functions (se usar):**
+```bash
+# Configurar variáveis para Firebase Functions
+firebase functions:config:set paypal.client_id="seu_client_id"
+firebase functions:config:set mercadopago.access_token="seu_token"
+```
+
+2. **Firebase Hosting (Next.js):**
+   - Use as variáveis `NEXT_PUBLIC_*` normalmente
+   - Elas serão incluídas no build estático
+
+### ✅ **Validação das Configurações**
+
+```bash
+# Verificar se todas as variáveis estão carregadas
+npm run dev
+# Checar o console do navegador para erros
+
+# Testar build de produção
+npm run build
+npm run start
+```
+
+### 🔒 **Segurança**
+
+- ✅ `.env` está no `.gitignore`
+- ✅ Credenciais removidas do código fonte  
+- ✅ Variables `NEXT_PUBLIC_*` são seguras para client-side
+- ⚠️ Nunca exponha tokens secretos como `MERCADOPAGO_ACCESS_TOKEN` no client-side
+
 ## Variáveis de Ambiente (`.env.local`)
 
-Para que o projeto funcione localmente, crie um arquivo `.env.local` na raiz e adicione as seguintes variáveis:
+### 📋 **Variáveis Legadas (Referência)**
+As seguintes variáveis foram migradas para o novo formato de segurança:
 
-```
-# Firebase (Cliente)
-NEXT_PUBLIC_FIREBASE_API_KEY="AIza..."
-NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY="TEST-..."
+```bash
+# REMOVIDO - Agora usa NEXT_PUBLIC_FIREBASE_* variables
+# NEXT_PUBLIC_FIREBASE_API_KEY="AIza..."
 
-# Firebase (Servidor - Admin SDK)
-# Geralmente gerenciado pelo ambiente de hospedagem (ex: App Hosting)
-# GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/serviceAccountKey.json"
+# REMOVIDO - Agora usa NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY
+# NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY="TEST-..."
 
-# APIs de Terceiros
+# Variáveis de servidor ainda necessárias:
+MERCADOPAGO_ACCESS_TOKEN="APP_USR-..."
+PAYPAL_CLIENT_SECRET="E..."
+
+# APIs de Terceiros (ainda necessárias se usar)
 FACEBOOK_PAGE_ACCESS_TOKEN="EAA..."
 INSTAGRAM_FEED_ACCESS_TOKEN="IGQVJ..."
 INSTAGRAM_SHOP_ACCESS_TOKEN="IGQVJ..."
 TWITTER_BEARER_TOKEN="AAAAA..."
-MERCADOPAGO_ACCESS_TOKEN="APP_USR-..."
-PAYPAL_CLIENT_ID="AZ..."
-PAYPAL_CLIENT_SECRET="E..."
 
 # Segurança dos Webhooks
 GOOGLE_SHEETS_WEBHOOK_SECRET="seu_token_secreto_aqui"
-
-# Cloudflare (Chat Externo - Se aplicável)
-CLOUDFLARE_ORG_ID="..."
 ```
+
+⚠️ **IMPORTANTE**: Use o novo formato de variáveis de ambiente conforme especificado na seção acima!
 
 ---
 

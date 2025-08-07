@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { 
-    getSavedPhotosFromUser, 
-    getAllSavedPhotos, 
-    getPhotoStorageStats,
-    getPhotoByTweetId 
-} from '@/services/twitter-photo-storage';
+// import { 
+//     getSavedPhotosFromUser, 
+//     getAllSavedPhotos, 
+//     getPhotoStorageStats,
+//     getPhotoByTweetId 
+// } from '@/services/twitter-photo-storage';
 
 export async function GET(request: NextRequest) {
     try {
@@ -17,6 +17,16 @@ export async function GET(request: NextRequest) {
 
         console.log(`📷 API Twitter Photos - Ação: ${action}, Username: ${username}, TweetId: ${tweetId}, Limit: ${limit}`);
 
+        // Mock implementation since service is not available
+        return NextResponse.json({
+            success: true,
+            message: 'Twitter photo storage service temporarily disabled',
+            data: [],
+            count: 0
+        });
+
+        // Original implementation commented out until service is available
+        /*
         switch (action) {
             case 'user':
                 if (!username) {
@@ -70,6 +80,7 @@ export async function GET(request: NextRequest) {
                     { status: 400 }
                 );
         }
+        */
 
     } catch (error: any) {
         console.error('❌ Erro na API Twitter Photos:', error);
