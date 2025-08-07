@@ -1,0 +1,29 @@
+name = "authkit-cloudflare"
+compatibility_date = "2024-08-01"
+pages_build_output_dir = "out"
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "authkit-production"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# Cloudflare R2 Storage
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "authkit-storage"
+
+# Cloudflare KV Store
+[[kv_namespaces]]
+binding = "KV"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Environment variables (configure in Cloudflare dashboard)
+# NEXT_PUBLIC_PAYPAL_CLIENT_ID
+# NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY
+# NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_ID
+# CLOUDFLARE_API_TOKEN
+# CLOUDFLARE_D1_DATABASE_ID
+# CLOUDFLARE_R2_BUCKET_NAME
+# NEXTAUTH_SECRET
+# NEXTAUTH_URL
+# GITHUB_PERSONAL_ACCESS_TOKEN

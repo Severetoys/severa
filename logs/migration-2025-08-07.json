@@ -1,0 +1,63 @@
+{
+  "migration_id": "migration_2025-08-07",
+  "started_at": "2025-08-07T12:10:47.324Z",
+  "completed_at": "2025-08-07T12:10:47.403Z",
+  "steps": [
+    {
+      "timestamp": "2025-08-07T12:10:47.324Z",
+      "type": "info",
+      "message": "Starting Firebase to Cloudflare migration..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.325Z",
+      "type": "info",
+      "message": "Creating D1 database schema..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.326Z",
+      "type": "success",
+      "message": "D1 schema saved to: /Users/italosanta/Desktop/firebase/schema/d1-schema.sql"
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.344Z",
+      "type": "info",
+      "message": "Generating mock data for D1 migration..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.383Z",
+      "type": "success",
+      "message": "Mock migration data saved to: /Users/italosanta/Desktop/firebase/data/migration-data.json"
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.383Z",
+      "type": "info",
+      "message": "Generating SQL insert statements..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.390Z",
+      "type": "success",
+      "message": "SQL insert statements saved to: /Users/italosanta/Desktop/firebase/data/migration-inserts.sql"
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.391Z",
+      "type": "info",
+      "message": "Creating Wrangler migration files..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.400Z",
+      "type": "success",
+      "message": "Wrangler migrations created in: /Users/italosanta/Desktop/firebase/migrations"
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.400Z",
+      "type": "info",
+      "message": "Creating R2 migration plan..."
+    },
+    {
+      "timestamp": "2025-08-07T12:10:47.403Z",
+      "type": "success",
+      "message": "R2 migration plan saved to: /Users/italosanta/Desktop/firebase/data/r2-migration-plan.json"
+    }
+  ],
+  "status": "completed"
+}

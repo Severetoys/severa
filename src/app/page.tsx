@@ -9,7 +9,7 @@ import AboutSection from '@/components/about-section';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { convertCurrency } from '@/ai/flows/currency-conversion-flow';
+// import { convertCurrency } from '@/ai/flows/currency-conversion-flow'; // Removed for Cloudflare compatibility
 import PixPaymentModal from '@/components/pix-payment-modal';
 import GPayPaymentModal from '@/components/gpay-payment-modal';
 import ApplePayPaymentModal from '@/components/applepay-payment-modal';
@@ -40,15 +40,14 @@ export default function Home() {
                 const userLocale = navigator.language || 'pt-BR';
                 setIsBrazil(userLocale.toLowerCase().includes('pt'));
 
-                const result = await convertCurrency({ targetLocale: userLocale });
-
-                if (result.amount && result.currencyCode) {
-                    setPaymentInfo({
-                        value: result.amount.toFixed(2),
-                        currency: result.currencyCode,
-                        symbol: result.currencySymbol
-                    });
-                }
+                // const result = await convertCurrency({ targetLocale: userLocale }); // Removed for Cloudflare compatibility
+                
+                // Mock payment info for now
+                setPaymentInfo({
+                    value: "9.99",
+                    currency: "BRL", 
+                    symbol: "R$"
+                });
             } catch (error) {
                 console.error("Failed to fetch currency", error);
                 // Mantém o valor padrão em BRL em caso de erro

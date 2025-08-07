@@ -1,38 +1,38 @@
-
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, Loader2, MapPin, Paperclip, Video, Mic, CheckCircle } from 'lucide-react';
-import { db, auth, storage } from '@/lib/firebase';
-import { collection, onSnapshot, addDoc, serverTimestamp, query, orderBy, doc, setDoc, Timestamp } from "firebase/firestore";
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import { signInAnonymously } from 'firebase/auth';
 
+// Importes REAL do Cloudflare Workers
+// Note: A lógica para a comunicação com o Cloudflare Workers precisaria ser implementada
+// Este é um exemplo de como a estrutura de importação e as referências poderiam ser adaptadas.
+// As funções `onSnapshot`, `addDoc`, etc., do Firebase não têm equivalentes diretos
+// e precisariam ser substituídas por chamadas a uma API do Cloudflare Workers.
+// Aqui, criamos um mock simples para ilustrar a mudança.
+
+const API_ENDPOINT = 'https://your-cloudflare-worker.your-account.workers.dev';
 
 interface Message {
   id: string;
   senderId: string;
   text: string; 
   originalText?: string;
-  timestamp: Timestamp;
+  timestamp: Date; // Usando objeto Date em vez de Timestamp do Firebase
   isLocation?: boolean;
   imageUrl?: string;
-  isTemporary?: boolean; // Marca se a mensagem é temporária (usuário) ou permanente (admin)
+  isTemporary?: boolean;
 }
 
 const getOrCreateChatId = (): string => {
     if (typeof window === 'undefined') return '';
     
-    // Cria um novo chat ID a cada sessão (temporário para o usuário)
-    // Mas mantém uma estrutura que permite ao admin rastrear todas as conversas
     const sessionId = Math.random().toString(36).substring(2, 12);
     const timestamp = Date.now();
     const chatId = `secret-chat-${timestamp}-${sessionId}`;
@@ -40,6 +40,11 @@ const getOrCreateChatId = (): string => {
     console.log(`[Chat Widget] Novo chat temporário criado: ${chatId}`);
     
     return chatId;
+};
+
+// Mock de um usuário para simular a autenticação anônima do Firebase
+const mockUser = {
+    uid: getOrCreateChatId(),
 };
 
 interface SecretChatWidgetProps {
@@ -51,7 +56,7 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
-    const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+    const [currentUser, setCurrentUser] = useState<typeof mockUser | null>(null);
     const [isAuthenticating, setIsAuthenticating] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -67,60 +72,37 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
         }
     }, [isOpen]);
 
+    // Simula a autenticação anônima com um usuário mock
     useEffect(() => {
         if (!isOpen) return;
 
-        const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-            setIsAuthenticating(true);
-            if (user) {
-                console.log('User already signed in:', user.uid, user.isAnonymous);
-                setCurrentUser(user);
-                setIsAuthenticating(false);
-            } else {
-                try {
-                    console.log('Signing in anonymously...');
-                    const userCredential = await signInAnonymously(auth);
-                    console.log('Anonymous sign-in successful:', userCredential.user.uid, userCredential.user.isAnonymous);
-                    setCurrentUser(userCredential.user);
-                } catch (error: any) {
-                    console.error('Error signing in anonymously:', error);
-                    toast({
-                        variant: 'destructive',
-                        title: 'Erro de autenticação',
-                        description: 'Não foi possível conectar ao chat. Recarregue a página.'
-                    });
-                } finally {
-                    setIsAuthenticating(false);
-                }
-            }
-        });
-        
-        return () => unsubscribeAuth();
-    }, [isOpen, toast]);
+        setIsAuthenticating(true);
+        // Simula um tempo de autenticação
+        setTimeout(() => {
+            setCurrentUser(mockUser);
+            setIsAuthenticating(false);
+            console.log('User signed in:', mockUser.uid);
+        }, 500);
 
+    }, [isOpen]);
+
+    // Simula a escuta de mensagens com polling em vez de onSnapshot
     useEffect(() => {
         if (!currentUser || !chatId.current || !isOpen) {
-            if (!isOpen) setIsLoading(true); // Reset loading state when closed
+            if (!isOpen) setIsLoading(true);
             return;
         }
 
         setIsLoading(true);
-        
-        try {
-            // Verificar se o Firebase está inicializado
-            if (!db) {
-                throw new Error('Firebase não está inicializado');
-            }
 
-            const chatDocRef = doc(db, 'chats', chatId.current);
-            const messagesCollection = collection(chatDocRef, 'messages');
-            const q = query(messagesCollection, orderBy('timestamp', 'asc'));
-
-            const unsubscribeMessages = onSnapshot(q, (querySnapshot) => {
-                const msgs: Message[] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
+        const fetchMessages = async () => {
+            try {
+                const response = await fetch(`${API_ENDPOINT}/chats/${chatId.current}/messages`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const msgs: Message[] = await response.json();
                 setMessages(msgs);
                 setIsLoading(false);
-            }, (error) => {
+            } catch (error) {
                 console.error("Erro ao buscar mensagens: ", error);
                 setIsLoading(false);
                 toast({
@@ -128,24 +110,15 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
                     title: 'Erro no chat',
                     description: 'Não foi possível carregar as mensagens. Recarregue a página.'
                 });
-            });
+            }
+        };
 
-            return () => {
-                try {
-                    unsubscribeMessages();
-                } catch (error) {
-                    console.error("Erro ao desinscrever listener:", error);
-                }
-            };
-        } catch (error: any) {
-            console.error("Erro ao inicializar chat:", error);
-            setIsLoading(false);
-            toast({
-                variant: 'destructive',
-                title: 'Erro no chat',
-                description: `Erro ao inicializar: ${error.message || 'Erro desconhecido'}`
-            });
-        }
+        // Simula a escuta em tempo real com polling a cada 3 segundos
+        fetchMessages();
+        const intervalId = setInterval(fetchMessages, 3000);
+
+        return () => clearInterval(intervalId);
+
     }, [currentUser, isOpen, toast]);
 
     useEffect(() => {
@@ -162,29 +135,25 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
         setIsSending(true);
 
         try {
-            // Verificar se o Firebase está inicializado
-            if (!db) {
-                throw new Error('Firebase não está inicializado');
-            }
-
-            const chatDocRef = doc(db, 'chats', chatId.current);
-            const messagesCollection = collection(chatDocRef, 'messages');
-
-            // Criar ou atualizar o documento do chat sem tradução
-            await setDoc(chatDocRef, { 
-                createdAt: serverTimestamp(),
-            }, { merge: true });
-
-            // Enviar mensagem sem tradução
-            await addDoc(messagesCollection, {
+            const messagePayload = {
                 text: trimmedMessage,
                 senderId: currentUser.uid,
-                timestamp: serverTimestamp(),
+                timestamp: new Date().toISOString(), // Usando ISO string para a data
                 isLocation,
                 imageUrl,
-                isTemporary: true, // Mensagens do usuário são marcadas como temporárias
+                isTemporary: true,
+            };
+
+            const response = await fetch(`${API_ENDPOINT}/chats/${chatId.current}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messagePayload),
             });
 
+            if (!response.ok) throw new Error('Failed to send message');
+            
             if (!isLocation && !imageUrl) {
                 setNewMessage('');
             }
@@ -208,7 +177,7 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
         navigator.geolocation.getCurrentPosition(
             position => {
                 const { latitude, longitude } = position.coords;
-                const link = `https://maps.google.com/?q=${latitude},${longitude}`;
+                const link = `https://www.google.com/maps?q=${latitude},${longitude}`;
                 handleSendMessage(link, { isLocation: true });
             },
             () => {
@@ -220,82 +189,39 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file || !currentUser || !chatId.current) {
-            console.log('[File Upload] Validation failed:', {
-                hasFile: !!file,
-                hasUser: !!currentUser,
-                hasChatId: !!chatId.current,
-                userId: currentUser?.uid,
-                isAnonymous: currentUser?.isAnonymous
-            });
-            return;
-        }
-
-        // Verificar se o usuário está realmente autenticado
-        const user = auth.currentUser;
-        console.log('[File Upload] Auth state check:', {
-            authCurrentUser: user?.uid,
-            isAnonymous: user?.isAnonymous,
-            accessToken: user ? await user.getIdToken() : null,
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: file.type,
-            chatId: chatId.current
-        });
-
-        if (!user) {
-            toast({ 
-                variant: 'destructive', 
-                title: 'Erro de autenticação', 
-                description: 'Usuário não autenticado. Recarregue a página.' 
-            });
             return;
         }
 
         setIsSending(true);
         toast({ title: "Enviando imagem..." });
+
         try {
-            const storageRef = ref(storage, `chat_uploads/${chatId.current}/${Date.now()}_${file.name}`);
-            console.log('[File Upload] Uploading to path:', storageRef.fullPath);
+            // A lógica de upload de arquivos precisaria ser adaptada para o Cloudflare
+            // Aqui, estamos simulando o upload para um Worker que armazena em R2, por exemplo
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch(`${API_ENDPOINT}/upload/${chatId.current}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) throw new Error('File upload failed');
             
-            await uploadBytes(storageRef, file);
-            console.log('[File Upload] Upload successful, getting download URL...');
-            
-            const imageUrl = await getDownloadURL(storageRef);
-            console.log('[File Upload] Download URL obtained:', imageUrl);
+            const { imageUrl } = await response.json();
             
             await handleSendMessage(`Imagem: ${file.name}`, { imageUrl: imageUrl });
             toast({ title: "Imagem enviada com sucesso!" });
         } catch (error: any) {
             console.error("Erro ao enviar imagem:", error);
-            console.error("Error details:", {
-                code: error.code,
-                message: error.message,
-                serverResponse: error.serverResponse,
-                customData: error.customData
-            });
-            
-            let errorMessage = 'Erro desconhecido ao enviar imagem.';
-            
-            if (error.code === 'storage/unauthorized') {
-                errorMessage = 'Sem permissão para fazer upload. Verifique a autenticação.';
-            } else if (error.code === 'storage/canceled') {
-                errorMessage = 'Upload cancelado.';
-            } else if (error.code === 'storage/unknown') {
-                errorMessage = 'Erro desconhecido no servidor Firebase.';
-            } else if (error.code === 'storage/invalid-format') {
-                errorMessage = 'Formato de arquivo inválido.';
-            } else if (error.code === 'storage/invalid-checksum') {
-                errorMessage = 'Erro na verificação do arquivo.';
-            }
             
             toast({ 
                 variant: 'destructive', 
                 title: 'Erro ao enviar imagem', 
-                description: errorMessage 
+                description: 'Erro desconhecido ao enviar imagem.'
             });
         } finally {
             setIsSending(false);
-            // Limpar o input file
             if (event.target) {
                 event.target.value = '';
             }
@@ -325,7 +251,6 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
     
     if (!isOpen) return null;
 
-    // Video call functionality temporarily disabled
     if (showVideoCall) {
         return (
             <div className="fixed inset-0 z-[2000] bg-black flex items-center justify-center">
@@ -374,7 +299,7 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
                                         {renderMessageContent(msg)}
                                     </div>
                                     <p className="text-xs text-right opacity-70 mt-1">
-                                        {msg.timestamp?.toDate()?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'Enviando...'}
+                                        {msg.timestamp?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'Enviando...'}
                                     </p>
                                 </div>
                                 {msg.senderId !== 'admin' && (
@@ -406,7 +331,7 @@ export default function SecretChatWidget({ isOpen }: SecretChatWidgetProps) {
                                 }
                             }}
                             className="flex-1 bg-primary/20 border-primary/30 focus:shadow-neon-red-light min-h-[40px] h-10 max-h-24 resize-none rounded-2xl px-4 text-white placeholder:text-neutral-400"
-                            disabled={isSending || isAuthenticating}
+                            disabled={isSending || newMessage.trim() === '' || isAuthenticating}
                             rows={1}
                         />
                         <Button 

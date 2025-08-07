@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "id": "user_1",
+      "email": "user1@example.com",
+      "display_name": "Usuário 1",
+      "subscription_status": "premium"
+    },
+    {
+      "id": "user_2",
+      "email": "user2@example.com",
+      "display_name": "Usuário 2",
+      "subscription_status": "free"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_1",
+      "name": "Video Premium 1",
+      "price": 29.99,
+      "type": "video",
+      "category": "exclusivo",
+      "active": 1
+    },
+    {
+      "id": "prod_2",
+      "name": "Foto Set 1",
+      "price": 19.99,
+      "type": "photo",
+      "category": "fotos",
+      "active": 1
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv_1",
+      "user_id": "user_1",
+      "title": "Chat Secreto",
+      "type": "secret"
+    }
+  ],
+  "page_views": [
+    {
+      "path": "/videos",
+      "count": 1250
+    },
+    {
+      "path": "/fotos",
+      "count": 890
+    },
+    {
+      "path": "/chat-secreto",
+      "count": 650
+    }
+  ]
+}

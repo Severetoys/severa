@@ -21,7 +21,15 @@ build/
 .cache/
 cache/
 .vercel
-.firebase/
+
+# Cloudflare
+.wrangler/
+wrangler.toml.bak
+workers-site/
+
+# MCP Configuration
+.mcprc.json
+mcp-*.log
 
 # Logs
 *.log
@@ -57,16 +65,11 @@ old.txt
 debug-*.js
 debug-*.ts
 
-# Firebase
-.firebaserc
-firebase-debug.log
-firestore-debug.log
-ui-debug.log
-database-debug.log
-
-# Executables
-cloudflared
-*.exe
+# Cloudflare specific
+.wrangler/
+wrangler.toml.bak
+dist/
+worker.js
 
 # Backup files
 *~

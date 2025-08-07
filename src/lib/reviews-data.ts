@@ -1,5 +1,5 @@
-
-import { Timestamp } from 'firebase/firestore';
+// Removido Firebase para compatibilidade com Cloudflare
+// Não precisamos mais do mock, pois usaremos strings estáticas.
 
 interface InitialReview {
   author: string;
@@ -8,7 +8,8 @@ interface InitialReview {
       author: string;
       text: string;
       isVerified: boolean;
-      createdAt: Timestamp;
+      // Substituído o tipo `Timestamp` por `string`.
+      createdAt: string;
   };
 }
 
@@ -34,10 +35,10 @@ export const initialReviews: InitialReview[] = [
     { author: "Jota", text: "Hoje ganhei um mestre. Um homem apaixonante. Risco é esse: vc pode se apaixonar! Italo é tudo isso que disseram aí é tudo que não dá para descrever. Um macho com pegada e que beija como ninguém." },
     { author: "MARCOS PUTA", text: "Estou cheio de tesão pra fazer uma visita, e ter esse atendimento, de qualidade, que todos tiveram." },
     { author: "Renan", text: "De 0 a 10, a note é 11. EXCELENTE" },
-    { author: "João", text: "Se você curte um bom fetiche e tem receio de realizar. Ítalo é o cara! Lindo pra caramba, cheiroso, pauzudo, metedor, calmo mas quando tem que forte, sabe te deixar maluco. Impressionado com ele e com certeza já virei assíduo. Se eu indico? 1000%! Impossível se arrepender.", reply: { author: "Italo Santos", text: "Você que é uma delícia 🤤", isVerified: true, createdAt: Timestamp.now() } },
-    { author: "ADV", text: "Me fez de puta. Me deu um Pau amanhecido pra mamar. Eu queria mais, ele chamou um amigo e ambos revesaram meu rabo. O amigo alargava e ele metia. Quase pedi uma DP, mas faltou coragem. Da próxima eu quero!!!! Uma delícia de homem!!!!", reply: { author: "Italo Santos", text: "😛", isVerified: true, createdAt: Timestamp.now() } },
-    { author: "Pedro", text: "Dominador sáfado na hora do sexo e muito simpático e atencioso antes e depois super recomendo", reply: { author: "Italo Santos", text: "Foi recíproco a simpatia né chefe", isVerified: true, createdAt: Timestamp.now() } },
-    { author: "Robson", text: "Matei a saudade deste moreno delicioso. Além do ótimo bate-papo de sempre. Te gosto, meu lindo!", reply: { author: "Italo Santos", text: "Você que é uma delícia super simpático", isVerified: true, createdAt: Timestamp.now() } },
+    { author: "João", text: "Se você curte um bom fetiche e tem receio de realizar. Ítalo é o cara! Lindo pra caramba, cheiroso, pauzudo, metedor, calmo mas quando tem que forte, sabe te deixar maluco. Impressionado com ele e com certeza já virei assíduo. Se eu indico? 1000%! Impossível se arrepender.", reply: { author: "Italo Santos", text: "Você que é uma delícia 🤤", isVerified: true, createdAt: "2025-08-07T12:00:00Z" } },
+    { author: "ADV", text: "Me fez de puta. Me deu um Pau amanhecido pra mamar. Eu queria mais, ele chamou um amigo e ambos revesaram meu rabo. O amigo alargava e ele metia. Quase pedi uma DP, mas faltou coragem. Da próxima eu quero!!!! Uma delícia de homem!!!!", reply: { author: "Italo Santos", text: "😛", isVerified: true, createdAt: "2025-08-07T12:05:00Z" } },
+    { author: "Pedro", text: "Dominador sáfado na hora do sexo e muito simpático e atencioso antes e depois super recomendo", reply: { author: "Italo Santos", text: "Foi recíproco a simpatia né chefe", isVerified: true, createdAt: "2025-08-07T12:10:00Z" } },
+    { author: "Robson", text: "Matei a saudade deste moreno delicioso. Além do ótimo bate-papo de sempre. Te gosto, meu lindo!", reply: { author: "Italo Santos", text: "Você que é uma delícia super simpático", isVerified: true, createdAt: "2025-08-07T12:15:00Z" } },
     { author: "Adriano", text: "O Ítalo é simplesmente o melhor garoto de programa que eu já fiquei. Além dele ser lindo, charmoso, gostoso, safado, putão e muito, mas muito bom de cama, ele é um ser humano sensacional. Cara bom de papo, inteligente, educado, honesto, simpático e extremamente gentil. Sou fã dele, pude realizar vários fetiches e só tive experiências maravilhosas. Super indico o trabalho dele." },
     { author: "Garoto novo", text: "Estive com ele, e foi sensacional. O beijo dele é maravilhoso, depois transamos intensamente." },
     { author: "Lucas", text: "Pessoa maravilhosa, paciente, delicioso excelente profissional, repetiria sempre" },
@@ -59,13 +60,13 @@ export const initialReviews: InitialReview[] = [
     { author: "Eu", text: "Não tenho nem palavras pra descrever esse homem brilhante, ele é simplesmente incrível e muito confiável e faz um sexo gostoso como ninguém,,muito atencioso, carinhoso e paciente. Ele é tudo de bom!!!!" },
     { author: "Lucas", text: "Lindo , muito simpático , me deixou super a vontade a ponto de eu não saber se queria conversar mais ou fuder mais !! E gosta mesmo de meter !!" },
     { author: "Fulano.", text: "Muito gostoso esse mlk, sou casado estava afim de sentir uma parada diferente e ele me surpreendeu. Quero de novo?" },
-    { author: "Anonimo", text: "O Italo e sensacional. Alem de ser um cara muito gente boa e simpático, trocamos uma ideia maneira, ele tem um bom papo. E no sexo ele é um absurdo de gostoso, uma das melhores transas da minha vida! Me levou a loucura.", reply: { author: "Alex", text: "Ítalo é muito gostoso e te deixa a vontade. Realiza como ninguém suas fantasias. Ainda é super educado. Vale a pena.", isVerified: false, createdAt: Timestamp.now() } },
+    { author: "Anonimo", text: "O Italo e sensacional. Alem de ser um cara muito gente boa e simpático, trocamos uma ideia maneira, ele tem um bom papo. E no sexo ele é um absurdo de gostoso, uma das melhores transas da minha vida! Me levou a loucura.", reply: { author: "Alex", text: "Ítalo é muito gostoso e te deixa a vontade. Realiza como ninguém suas fantasias. Ainda é super educado. Vale a pena.", isVerified: false, createdAt: "2025-08-07T12:20:00Z" } },
     { author: "K", text: "Sem comentários É um gostoso, educado e mete muito bem. Pauzudo! Gozei muitooooooooooooo" },
     { author: "Anônimo Mzh", text: "Cara gente fina, educado, com um pau muito gostoso e bem duro. Pica boa de sentar. Recomendo a todos." },
     { author: "Carlos - Niterói", text: "Bom! Hj fui conhecer o Dom Ítalo Ele é lindo, sorriso maroto, parece um modelo! Conversamos um pouco antes! Pois é a primeira vez, que experimento isso! Ele colocou um aparelho que dá choque no cú, deixou ele piscando o tempo todo! Depois colocou uns utensílios nas mãos e pés, me amordacou (tudo com meu consentimento), depois me comeu 2 vezes, até ele gozar! Que cara gostoso! Ele bj os meus mamilos e mordiscou-os, deixando extasiado! Quero-o de novo!" },
     { author: "@", text: "Acabei de sair do apto Ítalo. Ambiente limpo, de fácil acesso e o atendimento dele é ótimo! Foi minha primeira experiência com um fetichista e foi fantástico! Espero poder voltar!" },
     { author: "Robson", text: "Lindo, gostoso, tranquilo, muito gente boa, pegada inigualável. O Ítalo sabe o que faz! Apesar da pouca idade, é um doutos em matéria de dar prazer." },
-    { author: "Francisco Rio de Janeiro", text: "O que eu mais gostei no Itálo foi tudo, rss. Realmente ele me recebeu muito bem, me deu o que eu queria, e incansável me fez sentir e ter uma experiência única ao lado dele.", reply: { author: "Gab", text: "Ele é muito simpático, gostoso e fode muito bem. Eu amei.", isVerified: false, createdAt: Timestamp.now() } },
+    { author: "Francisco Rio de Janeiro", text: "O que eu mais gostei no Itálo foi tudo, rss. Realmente ele me recebeu muito bem, me deu o que eu queria, e incansável me fez sentir e ter uma experiência única ao lado dele.", reply: { author: "Gab", text: "Ele é muito simpático, gostoso e fode muito bem. Eu amei.", isVerified: false, createdAt: "2025-08-07T12:25:00Z" } },
     { author: "De outro estado", text: "Quando falei a primeira com o Ítalo eu pedi pra ele fazer uns fetiches bem loucos comigo. Fui até ele acreditando que ia ser como os outros que prometem e não cumprem...Ele cumpriu tudo o que combinamos e muito mais. O cara é fantástico! Super educado e simpático, mas sabe impor respeito na hora do sexo. Se eu morasse na mesma cidade com ele ia querer sair toda semana com ele hahaha. Ah, ele leva a segurança do cliente bem a sério e sabe respeitar seus limites. Recomendo pra caramba!" },
     { author: "Luiz", text: "Garoto e bom demais" },
     { author: "Putao bare", text: "Chupou meu cu demorado, meteu a mão na minha cuceta, me deu um mijada dentro e finalizou com um leitada dentro no pelo." },

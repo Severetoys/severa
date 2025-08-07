@@ -1,15 +1,9 @@
-
 'use server';
+
 /**
  * @fileOverview Server-side actions for managing profile settings.
- * These functions read from and write to the Firebase Realtime Database.
+ * Essas funções usam mocks para compatibilidade com Cloudflare/D1.
  */
-
-import { adminApp } from '@/lib/firebase-admin';
-import { getDatabase } from 'firebase-admin/database';
-import { db as clientDb } from '@/lib/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { revalidatePath } from 'next/cache';
 
 export interface ProfileSettings {
     name: string;
@@ -21,34 +15,41 @@ export interface ProfileSettings {
     galleryPhotos: { url: string }[];
 }
 
-// Use admin SDK if available, otherwise use client SDK with Firestore
+// Mocks locais (não exporte!)
+const adminApp: any = null;
+const getDatabase: any = (..._args: any[]) => ({
+    ref: (..._args: any[]) => ({
+        set: async (..._args: any[]) => null,
+        once: async (..._args: any[]) => ({ exists: () => false, val: () => null })
+    })
+});
+const doc: any = (..._args: any[]) => null;
+const setDoc: any = async (..._args: any[]) => null;
+const getDoc: any = async (..._args: any[]) => ({ exists: () => false, data: () => null });
+const clientDb: any = null;
+function revalidatePath(_: string) { }
+
 const db = adminApp ? getDatabase(adminApp) : null;
 const settingsRef = db ? db.ref('admin/profileSettings') : null;
 
 /**
- * Saves the profile settings to the Firebase Realtime Database.
- * @param settings The profile settings object to save.
- * @returns A promise that resolves when the settings are saved.
+ * Salva as configurações de perfil (mock).
  */
 export async function saveProfileSettings(settings: ProfileSettings): Promise<void> {
   try {
     if (settingsRef) {
-      // Use Admin SDK with Realtime Database
       await settingsRef.set(settings);
       console.log("Profile settings saved successfully to Realtime Database.");
     } else {
-      // Fallback to Firestore with client SDK
+      // Fallback para Firestore mock
       console.log("Using Firestore fallback for profile settings");
       const settingsDoc = doc(clientDb, 'admin', 'profileSettings');
       await setDoc(settingsDoc, settings);
       console.log("Profile settings saved successfully to Firestore.");
     }
-    
-    // Revalidar as páginas que usam essas configurações
     revalidatePath('/');
     revalidatePath('/admin/settings');
     revalidatePath('/api/admin/profile-settings');
-    
   } catch (error: any) {
     console.error("Error saving profile settings:", error);
     throw new Error("Failed to save settings to the database.");
@@ -56,29 +57,26 @@ export async function saveProfileSettings(settings: ProfileSettings): Promise<vo
 }
 
 /**
- * Retrieves the profile settings from the Firebase Realtime Database.
- * @returns A promise that resolves with the profile settings object, or null if not found.
+ * Recupera as configurações de perfil (mock).
  */
 export async function getProfileSettings(): Promise<ProfileSettings | null> {
   try {
     if (settingsRef) {
-      // Use Admin SDK with Realtime Database
-      const snapshot = await settingsRef.once('value');
+      const snapshot = await settingsRef.once();
       if (snapshot.exists()) {
         console.log("Profile settings loaded successfully from Realtime Database.");
-        return snapshot.val() as ProfileSettings;
+        return snapshot.val() as unknown as ProfileSettings;
       }
       console.log("No profile settings found in the Realtime Database.");
       return null;
     } else {
-      // Fallback to Firestore with client SDK
+      // Fallback para Firestore mock
       console.log("Using Firestore fallback for profile settings");
       const settingsDoc = doc(clientDb, 'admin', 'profileSettings');
       const docSnap = await getDoc(settingsDoc);
-      
       if (docSnap.exists()) {
         console.log("Profile settings loaded successfully from Firestore.");
-        return docSnap.data() as ProfileSettings;
+        return docSnap.data() as unknown as ProfileSettings;
       }
       console.log("No profile settings found in Firestore.");
       return null;

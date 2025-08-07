@@ -1,7 +1,12 @@
-import { storage } from '@/lib/firebase';
-import { ref, listAll, getDownloadURL, getMetadata } from 'firebase/storage';
+"use client";
 
-export interface FirebaseFile {
+// Importes REAL do Cloudflare Workers
+// Substituímos os imports do Firebase por uma URL de API que simula a interação
+// com um Cloudflare Worker.
+
+const API_ENDPOINT = 'https://your-cloudflare-worker.your-account.workers.dev';
+
+export interface CloudflareFile {
   name: string;
   fullPath: string;
   url: string;
@@ -14,42 +19,46 @@ export interface FirebaseFile {
   };
 }
 
-export async function fetchFirebaseFiles(folderPath: string = 'general-uploads'): Promise<FirebaseFile[]> {
-  try {
-    const folderRef = ref(storage, folderPath);
-    const result = await listAll(folderRef);
-    
-    const files: FirebaseFile[] = [];
-    
-    for (const itemRef of result.items) {
-      try {
-        const [url, metadata] = await Promise.all([
-          getDownloadURL(itemRef),
-          getMetadata(itemRef)
-        ]);
-        
-        files.push({
-          name: itemRef.name,
-          fullPath: itemRef.fullPath,
-          url,
-          type: metadata.contentType || 'application/octet-stream',
-          size: metadata.size,
-          createdAt: metadata.timeCreated,
-          metadata: {
-            visibility: metadata.customMetadata?.visibility as 'public' | 'subscribers' || 'public',
-            customMetadata: metadata.customMetadata
-          }
-        });
-      } catch (error) {
-        console.error(`Erro ao carregar arquivo ${itemRef.name}:`, error);
-      }
+// As funções agora interagem com a API do Cloudflare Workers
+export async function listCloudflareFiles(folderPath: string = 'general-uploads'): Promise<CloudflareFile[]> {
+    try {
+        const response = await fetch(`${API_ENDPOINT}/files?folder=${folderPath}`);
+        if (!response.ok) {
+            throw new Error('Falha ao buscar arquivos do Cloudflare Workers');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Erro ao buscar arquivos:", error);
+        return [];
     }
-    
-    // Ordenar por data de criação (mais recente primeiro)
-    return files.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+}
+
+export async function getCloudflareDownloadURL(filePath: string): Promise<string | null> {
+    // A URL de download geralmente é o próprio endpoint do arquivo no R2
+    return `${API_ENDPOINT}/files/${filePath}`;
+}
+
+export async function getCloudflareMetadata(filePath: string): Promise<any> {
+    try {
+        const response = await fetch(`${API_ENDPOINT}/metadata?path=${filePath}`);
+        if (!response.ok) {
+            throw new Error('Falha ao obter metadados');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Erro ao buscar metadados:", error);
+        return null;
+    }
+}
+
+export async function fetchCloudflareFiles(folderPath: string = 'general-uploads'): Promise<CloudflareFile[]> {
+  try {
+      const files = await listCloudflareFiles(folderPath);
+      // Você pode adicionar mais lógica aqui para enriquecer os dados, se necessário
+      return files;
   } catch (error) {
-    console.error('Erro ao buscar arquivos do Firebase Storage:', error);
-    return [];
+      console.error("Erro ao buscar arquivos:", error);
+      return [];
   }
 }
 

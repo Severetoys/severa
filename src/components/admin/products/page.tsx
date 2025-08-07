@@ -1,9 +1,9 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { PlusCircle, MoreHorizontal } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { PlusCircle, MoreHorizontal, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,9 +42,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { collection, addDoc, getDocs, Timestamp, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useRouter } from "next/navigation";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+// Removido todos os mocks e imports do Firebase
 
 interface Product {
   id: string;
@@ -53,7 +54,7 @@ interface Product {
   price: number;
   status: 'Ativo' | 'Inativo';
   sales: number;
-  createdAt: Timestamp;
+  createdAt: string;
   imageUrl: string;
 }
 
@@ -72,15 +73,16 @@ export default function AdminProductsPage() {
   const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const API_URL = "YOUR_CLOUDFLARE_WORKER_URL"; // URL da sua API no Worker
+
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const productsCollection = collection(db, "products");
-      const querySnapshot = await getDocs(productsCollection);
-      const productsList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Product));
+      const response = await fetch(`${API_URL}/products`);
+      if (!response.ok) {
+        throw new Error("Erro ao carregar produtos");
+      }
+      const productsList: Product[] = await response.json();
       setProducts(productsList);
     } catch (error) {
       console.error("Error fetching products: ", error);
@@ -117,15 +119,20 @@ export default function AdminProductsPage() {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, "products"), {
-        name,
-        description,
-        price: parseFloat(price),
-        status: 'Ativo',
-        sales: 0,
-        createdAt: Timestamp.now(),
-        imageUrl: imageUrl,
+      const response = await fetch(`${API_URL}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          description,
+          price: parseFloat(price),
+          imageUrl,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar produto");
+      }
       
       toast({
         title: "Produto Adicionado!",
@@ -134,7 +141,7 @@ export default function AdminProductsPage() {
       
       resetForm();
       setIsDialogOpen(false);
-      fetchProducts(); // Refresh the list
+      fetchProducts();
     } catch (error) {
       console.error("Error adding product: ", error);
       toast({
@@ -149,12 +156,19 @@ export default function AdminProductsPage() {
   
   const handleDeleteProduct = async (productId: string) => {
     try {
-      await deleteDoc(doc(db, "products", productId));
+      const response = await fetch(`${API_URL}/products/${productId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erro ao excluir produto");
+      }
+
       toast({
         title: "Produto Excluído",
         description: "O produto foi removido com sucesso.",
       });
-      fetchProducts(); // Refresh the list
+      fetchProducts();
     } catch (error) {
       console.error("Error deleting product: ", error);
       toast({
@@ -165,6 +179,13 @@ export default function AdminProductsPage() {
     }
   };
 
+  const formatProductDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), 'dd/MM/yyyy', { locale: ptBR });
+    } catch {
+      return 'Data inválida';
+    }
+  };
 
   return (
     <>
@@ -219,7 +240,7 @@ export default function AdminProductsPage() {
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
                   <Button type="submit" onClick={handleAddProduct} disabled={isSubmitting}>
-                    {isSubmitting ? "Salvando..." : "Salvar Produto"}
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar Produto"}
                   </Button>
                 </DialogFooter>
             </DialogContent>
@@ -257,7 +278,12 @@ export default function AdminProductsPage() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center">Carregando produtos...</TableCell>
+                  <TableCell colSpan={7} className="text-center">
+                    <div className="flex items-center justify-center gap-2">
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                        Carregando produtos...
+                    </div>
+                  </TableCell>
                 </TableRow>
               ) : products.length > 0 ? (
                 products.map((product) => (
@@ -283,7 +309,7 @@ export default function AdminProductsPage() {
                       {product.sales}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {product.createdAt.toDate().toLocaleDateString()}
+                      {formatProductDate(product.createdAt)}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

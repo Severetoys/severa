@@ -1,0 +1,56 @@
+'use server';
+
+// Admin actions for dashboard - Cloudflare compatible version
+// Replaced Firebase with mock data for Cloudflare deployment
+
+interface DashboardStats {
+  totalSubscribers: number;
+  totalConversations: number;
+  totalProducts: number;
+  pendingReviews: number;
+}
+
+interface TopPage {
+  id: string;
+  path: string;
+  count: number;
+}
+
+export async function getDashboardStats(): Promise<DashboardStats> {
+  console.log('[Admin Actions] Getting dashboard stats (mock data)');
+  
+  // Return mock data for Cloudflare deployment
+  return {
+    totalSubscribers: 0,
+    totalConversations: 0,
+    totalProducts: 0,
+    pendingReviews: 0,
+  };
+}
+
+export async function getTopPages(): Promise<TopPage[]> {
+  console.log('[Admin Actions] Getting top pages (mock data)');
+  
+  // Return mock data for Cloudflare deployment
+  return [];
+}
+
+export async function invalidateStatsCache(): Promise<void> {
+  console.log('[Admin Actions] Invalidating stats cache (mock)');
+  // Mock implementation
+}
+
+export async function refreshDashboardData(): Promise<void> {
+  console.log('[Admin Actions] Refreshing dashboard data (mock)');
+  // Mock implementation
+}
+
+// Export mock functions for compatibility
+export const adminActions = {
+  getDashboardStats,
+  getTopPages,
+  invalidateStatsCache,
+  refreshDashboardData,
+};
+
+console.log('🔧 Admin actions loaded (Cloudflare compatible)');

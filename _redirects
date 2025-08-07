@@ -1,0 +1,2 @@
+/admin/* 301 /auth/login
+/dashboard/* 302 /auth/login

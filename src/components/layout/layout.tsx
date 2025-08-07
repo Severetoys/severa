@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,12 +8,11 @@ import type { Fetish } from '@/lib/fetish-data';
 import AdultWarningDialog from '@/components/adult-warning-dialog';
 import SiteFooter from './site-footer';
 import { usePathname } from 'next/navigation';
-import { doc, setDoc, serverTimestamp, runTransaction } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import SecretChatWidget from '@/components/secret-chat-widget';
 import SecretChatButton from '@/components/secret-chat-button';
 import MainFooter from './main-footer';
 
+// Removido todos os imports e mocks do Firebase
 
 const getOrCreateChatId = (): string => {
     if (typeof window === 'undefined') {
@@ -47,40 +45,21 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const trackVisitor = async () => {
         if (pathname.startsWith('/admin')) return;
 
-        // Track chat visitor
-        const chatId = getOrCreateChatId();
-        if (chatId) {
-            const chatDocRef = doc(db, 'chats', chatId);
-            try {
-                await setDoc(chatDocRef, {
-                    lastSeen: serverTimestamp(),
-                }, { merge: true });
-            } catch (error) {
-                console.error("Error creating/updating visitor tracking document:", error);
-            }
+        try {
+            // Envia dados para o Worker do Cloudflare
+            await fetch('YOUR_CLOUDFLARE_WORKER_URL/track', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chatId: getOrCreateChatId(),
+                    pathname: pathname
+                }),
+            });
+        } catch (error) {
+            console.error("Erro ao enviar dados de rastreamento para o Worker:", error);
         }
-        
-        // Track page view - Temporarily disabled for development
-        /*
-        if (pathname) {
-            // Sanitize path to use as a document ID in Firestore
-            const docId = pathname === '/' ? 'home' : pathname.replace(/\//g, '_');
-            const pageViewRef = doc(db, 'pageViews', docId);
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const pageViewDoc = await transaction.get(pageViewRef);
-                    if (!pageViewDoc.exists()) {
-                        transaction.set(pageViewRef, { path: pathname, count: 1, lastViewed: serverTimestamp() });
-                    } else {
-                        const newCount = pageViewDoc.data().count + 1;
-                        transaction.update(pageViewRef, { count: newCount, lastViewed: serverTimestamp() });
-                    }
-                });
-            } catch (error) {
-                console.error("Error updating page view count:", error);
-            }
-        }
-        */
     };
 
     trackVisitor();
@@ -124,7 +103,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   if (isAdminPanel) {
     return <>{children}</>;
   }
-
 
   return (
     <>

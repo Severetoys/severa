@@ -1,0 +1,26 @@
+{
+  "bucket": "firebase-migration-bucket",
+  "folders": [
+    {
+      "source": "firebase-storage://your-project.appspot.com/videos/",
+      "destination": "r2://your-bucket/videos/",
+      "description": "Migrate video files from Firebase Storage to R2"
+    },
+    {
+      "source": "firebase-storage://your-project.appspot.com/photos/",
+      "destination": "r2://your-bucket/photos/",
+      "description": "Migrate photo files from Firebase Storage to R2"
+    },
+    {
+      "source": "firebase-storage://your-project.appspot.com/thumbnails/",
+      "destination": "r2://your-bucket/thumbnails/",
+      "description": "Migrate thumbnail files from Firebase Storage to R2"
+    }
+  ],
+  "commands": [
+    "wrangler r2 bucket create firebase-migration-bucket",
+    "# Use rclone or similar tool to sync files:",
+    "# rclone sync firebase-storage:your-project.appspot.com/videos/ r2:your-bucket/videos/",
+    "# rclone sync firebase-storage:your-project.appspot.com/photos/ r2:your-bucket/photos/"
+  ]
+}

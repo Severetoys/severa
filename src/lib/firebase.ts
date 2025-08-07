@@ -1,35 +1,20 @@
-// FIRST: Disable App Check before any Firebase imports
-import './disable-app-check';
+// Compatibility layer - Firebase replaced with Cloudflare services
+// This file maintains exports to prevent build errors during migration
 
-// Import the functions you need from the SDKs
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getDatabase, query, orderByChild, ref, off } from "firebase/database";
-import { getFirestore } from "firebase/firestore";
-import { getStorage }from "firebase/storage";
+import { 
+  db as cloudflareDb, 
+  storage as cloudflareStorage, 
+  auth as cloudflareAuth,
+  realtime as cloudflareRealtime,
+  serverTimestamp,
+  arrayUnion,
+  arrayRemove,
+  increment
+} from './cloudflare';
 
-// CRITICAL: Disable App Check completely before any Firebase initialization
-if (typeof window !== 'undefined') {
-  // Set the debug token BEFORE any Firebase initialization
-  (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-  
-  // Also disable in different potential locations
-  if (typeof self !== 'undefined') {
-    (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-  }
-  
-  // Set in localStorage as well (some versions check here)
-  try {
-    localStorage.setItem('FIREBASE_APPCHECK_DEBUG_TOKEN', 'true');
-  } catch (e) {
-    // Ignore localStorage errors in case it's not available
-  }
-  
-  console.log('[Firebase] App Check disabled with debug token');
-}
+console.warn('[Migration] Firebase has been replaced with Cloudflare services.');
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Mock Firebase configuration (kept for reference)
 const firebaseConfig = {
   apiKey: "AIzaSyC7yaXjEFWFORvyLyHh1O5SPYjRCzptTg8",
   authDomain: "authkit-y9vjx.firebaseapp.com",
@@ -41,14 +26,35 @@ const firebaseConfig = {
   measurementId: "G-XKJWPXDPZS"
 };
 
+// Export Cloudflare services with Firebase-compatible names
+export const app = null; // Not needed for Cloudflare
+export const auth = cloudflareAuth;
+export const db = cloudflareDb;
+export const storage = cloudflareStorage;
+export const database = cloudflareRealtime;
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const auth = getAuth(app);
-const database = getDatabase(app);
-const storage = getStorage(app);
+// Export utility functions
+export { serverTimestamp, arrayUnion, arrayRemove, increment };
 
+// Mock query functions for compatibility
+export const query = (...args: any[]) => {
+  console.log('[Migration] Mock query function called');
+  return { docs: [], size: 0 };
+};
 
-export { app, firebaseConfig, db, auth, database, storage, query, orderByChild, ref, off };
+export const orderByChild = (field: string) => {
+  console.log('[Migration] Mock orderByChild called with:', field);
+  return query;
+};
+
+export const ref = (path: string) => {
+  console.log('[Migration] Mock ref called with:', path);
+  return { path };
+};
+
+export const off = (ref: any, callback?: any) => {
+  console.log('[Migration] Mock off called');
+};
+
+export { firebaseConfig };
 
