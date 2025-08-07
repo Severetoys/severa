@@ -145,8 +145,17 @@ A aplicação segue o princípio de "negar por padrão", garantindo segurança m
 Para que o projeto funcione localmente, crie um arquivo `.env.local` na raiz e adicione as seguintes variáveis:
 
 ```
-# Firebase (Cliente)
-NEXT_PUBLIC_FIREBASE_API_KEY="AIza..."
+# Firebase Configuration (All values now required in environment variables for security)
+NEXT_PUBLIC_FIREBASE_API_KEY="your_api_key_here"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your_project.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_DATABASE_URL="https://your_project-default-rtdb.firebaseio.com"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="your_project_id"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your_project.firebasestorage.app"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your_sender_id"
+NEXT_PUBLIC_FIREBASE_APP_ID="your_app_id"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="your_measurement_id"
+
+# Payments
 NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY="TEST-..."
 
 # Firebase (Servidor - Admin SDK)
