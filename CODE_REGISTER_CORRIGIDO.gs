@@ -9,13 +9,16 @@ const LOGIN_PAGE_URL = "https://script.google.com/macros/s/AKfycbx8D38lGjcdEvy1j
 const APPS_SCRIPT_AUTH_TOKEN = "fece411ffe42db3a3bb143728423f37ad4f92a42bdc1c1dfd516638f9f940b37";
 
 const firebaseConfigForClient = {
-  apiKey: "AIzaSyC7yaXjEFWFORvyLyHh1O5SPYjRCzptTg8",
-  authDomain: "authkit-y9vjx.firebaseapp.com",
-  projectId: "authkit-y9vjx",
-  storageBucket: "authkit-y9vjx.firebasestorage.app",
-  messagingSenderId: "308487499277",
-  appId: "1:308487499277:web:3fde6468b179432e9f2f44",
-  measurementId: "G-XKJWPXDPZS"
+  // SECURITY NOTE: In production, these values should come from environment variables
+  // This is a Google Apps Script file that needs hardcoded values for client-side use
+  // Make sure to use your actual Firebase project values here
+  apiKey: "your_api_key_here",
+  authDomain: "your_project.firebaseapp.com",
+  projectId: "your_project_id",
+  storageBucket: "your_project.firebasestorage.app",
+  messagingSenderId: "your_sender_id",
+  appId: "your_app_id",
+  measurementId: "your_measurement_id"
 };
 
 function setupInitialProperties() {

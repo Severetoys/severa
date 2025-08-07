@@ -16,15 +16,16 @@
 2. Faça login com GitHub
 3. Clique em "New Project"
 4. Selecione seu repositório privado
-5. Configure as variáveis de ambiente:
+5. Configure as variáveis de ambiente (use os valores do seu .env.local):
    ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyC7yaXjEFWFORvyLyHh1O5SPYjRCzptTg8
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=authkit-y9vjx.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=authkit-y9vjx
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=authkit-y9vjx.appspot.com
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=308487499277
-   NEXT_PUBLIC_FIREBASE_APP_ID=1:308487499277:web:3fde6468b179432e9f2f44
-   NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://authkit-y9vjx-default-rtdb.firebaseio.com
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
+   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
    MERCADOPAGO_PUBLIC_KEY=APP_USR-...
    MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
    NEXT_PUBLIC_PAYPAL_CLIENT_ID=AXykIWKfbbsR_Qe4eLrDgxudUWcoFn-cihQdgWJTqEOVQiP5fxXln-C5fr1QABQ4jowP7Oz2nkNtPFie

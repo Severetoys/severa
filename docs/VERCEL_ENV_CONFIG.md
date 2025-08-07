@@ -1,5 +1,8 @@
 # Configuração de Variáveis de Ambiente no Vercel
 
+## ⚠️ SECURITY UPDATE
+**IMPORTANT:** All Firebase configuration values are now environment variables for security. Never commit real API keys to your repository. Use the values from your local `.env.local` file when configuring deployment environments.
+
 ## ⚠️ PROBLEMA RESOLVIDO
 O erro "Environment Variable references Secret which does not exist" foi causado pelo arquivo `vercel.json` que referenciava secrets não existentes.
 
@@ -18,15 +21,16 @@ O erro "Environment Variable references Secret which does not exist" foi causado
 - Clique em **Settings** > **Environment Variables**
 - Adicione TODAS as variáveis abaixo:
 
-### 🔥 Firebase Configuration
+### 🔥 Firebase Configuration (Use your actual values from .env.local)
 ```
-NEXT_PUBLIC_FIREBASE_API_KEY = AIzaSyC7yaXjEFWFORvyLyHh1O5SPYjRCzptTg8
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = authkit-y9vjx.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID = authkit-y9vjx
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = authkit-y9vjx.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = 308487499277
-NEXT_PUBLIC_FIREBASE_APP_ID = 1:308487499277:web:3fde6468b179432e9f2f44
-NEXT_PUBLIC_FIREBASE_DATABASE_URL = https://authkit-y9vjx-default-rtdb.firebaseio.com
+NEXT_PUBLIC_FIREBASE_API_KEY = your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID = your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = your_project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID = your_app_id
+NEXT_PUBLIC_FIREBASE_DATABASE_URL = https://your_project-default-rtdb.firebaseio.com
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID = your_measurement_id
 ```
 
 ### 💰 Payment Systems
