@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       }, { status: 503 });
     }
 
-    const { getStorage } = await import('firebase-admin/storage');
+    const { getStorage } = await import('@/lib/firebase-admin');
     
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

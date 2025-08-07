@@ -1,7 +1,6 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { getStorage } from 'firebase-admin/storage';
-import { adminApp } from '@/lib/firebase-admin';
+import { adminApp, getStorage } from '@/lib/firebase-admin';
 import axios from 'axios';
 import { extname } from 'path';
 

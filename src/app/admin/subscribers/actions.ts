@@ -4,9 +4,7 @@
  * @fileOverview Server-side actions for managing registered users (subscribers).
  */
 
-import { adminApp } from '@/lib/firebase-admin';
-import { getDatabase } from 'firebase-admin/database';
-import { getStorage } from 'firebase-admin/storage';
+import { adminApp, getDatabase, getStorage } from '@/lib/firebase-admin';
 
 export interface RegisteredUser {
     id: string;

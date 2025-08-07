@@ -5,8 +5,7 @@
  * These functions simulate connecting/disconnecting by saving state to the database.
  */
 
-import { adminApp } from '@/lib/firebase-admin';
-import { getDatabase } from 'firebase-admin/database';
+import { adminApp, getDatabase } from '@/lib/firebase-admin';
 
 export type Integration = "twitter" | "instagram" | "facebook" | "paypal" | "mercadopago";
 

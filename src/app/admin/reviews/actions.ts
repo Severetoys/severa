@@ -4,8 +4,7 @@
  * @fileOverview Server-side actions for managing user reviews.
  */
 
-import { adminApp } from '@/lib/firebase-admin';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { adminApp, getFirestore, FieldValue } from '@/lib/firebase-admin';
 
 export interface Review {
     id: string;
