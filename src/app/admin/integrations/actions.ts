@@ -10,6 +10,13 @@ import { getDatabase } from 'firebase-admin/database';
 
 export type Integration = "twitter" | "instagram" | "facebook" | "paypal" | "mercadopago";
 
+// Sanitize service name for safe logging
+const sanitizeServiceName = (service: Integration): string => {
+  // Ensure only alphanumeric characters and allowed values
+  const allowedServices = ["twitter", "instagram", "facebook", "paypal", "mercadopago"];
+  return allowedServices.includes(service) ? service : "unknown";
+};
+
 const db = adminApp ? getDatabase(adminApp) : null;
 const integrationsRef = db ? db.ref('admin/integrations') : null;
 
@@ -28,10 +35,10 @@ export async function connectService(service: Integration): Promise<{ success: b
 
   try {
     await integrationsRef.child(service).set(true);
-    console.log(`Service ${service} marked as connected.`);
+    console.log(`Service marked as connected:`, sanitizeServiceName(service));
     return { success: true, message: `${service} conectado com sucesso (simulado).` };
   } catch (error: any) {
-    console.error(`Error connecting service ${service}:`, error);
+    console.error(`Error connecting service:`, sanitizeServiceName(service), error);
     return { success: false, message: `Falha ao conectar ${service}.` };
   }
 }
@@ -49,10 +56,10 @@ export async function disconnectService(service: Integration): Promise<{ success
 
   try {
     await integrationsRef.child(service).set(false);
-    console.log(`Service ${service} marked as disconnected.`);
+    console.log(`Service marked as disconnected:`, sanitizeServiceName(service));
     return { success: true, message: `${service} desconectado com sucesso.` };
   } catch (error: any) {
-     console.error(`Error disconnecting service ${service}:`, error);
+     console.error(`Error disconnecting service:`, sanitizeServiceName(service), error);
     return { success: false, message: `Falha ao desconectar ${service}.` };
   }
 }
@@ -72,7 +79,7 @@ export async function getIntegrationStatus(service: Integration): Promise<boolea
         const snapshot = await integrationsRef.child(service).once('value');
         return snapshot.val() === true;
     } catch (error: any) {
-        console.error(`Error getting status for ${service}:`, error);
+        console.error(`Error getting status for service:`, sanitizeServiceName(service), error);
         return false;
     }
 }

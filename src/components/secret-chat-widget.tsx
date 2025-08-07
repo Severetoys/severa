@@ -33,7 +33,10 @@ interface Message {
 const getOrCreateChatId = (): string => {
     if (typeof window === 'undefined') return '';
     
-    const sessionId = Math.random().toString(36).substring(2, 12);
+    // Use cryptographically secure random values
+    const randomBytes = new Uint8Array(8);
+    crypto.getRandomValues(randomBytes);
+    const sessionId = Array.from(randomBytes, byte => byte.toString(36)).join('').substring(0, 10);
     const timestamp = Date.now();
     const chatId = `secret-chat-${timestamp}-${sessionId}`;
     

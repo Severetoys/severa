@@ -224,7 +224,11 @@ class CloudflareGitHubIntegration {
     console.log('🌟 Cloudflare-GitHub MCP Integration server started');
     console.log(`Mode: ${this.integrationMode}`);
     console.log(`GitHub Repo: ${this.githubRepo}`);
-    console.log(`Cloudflare Account: ${this.cloudflareAccountId}`);
+    // Redact sensitive account information
+    const redactedAccountId = this.cloudflareAccountId ? 
+      `${this.cloudflareAccountId.substring(0, 4)}****${this.cloudflareAccountId.substring(this.cloudflareAccountId.length - 4)}` : 
+      'not-configured';
+    console.log(`Cloudflare Account: ${redactedAccountId}`);
     
     // Simulate workflow execution for demo
     if (this.integrationMode === 'auto-deploy') {

@@ -3,6 +3,41 @@
  * Usado como fallback quando APIs principais falharem
  */
 
+// Proper HTML sanitization function to prevent XSS
+const sanitizeHTML = (html: string): string => {
+    if (!html) return '';
+    
+    // First pass: handle malformed tags and edge cases
+    let sanitized = html
+        // Remove script tags and their content
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        // Remove style tags and their content
+        .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+        // Remove on* event handlers
+        .replace(/\s*on\w+\s*=\s*"[^"]*"/gi, '')
+        .replace(/\s*on\w+\s*=\s*'[^']*'/gi, '')
+        // Remove javascript: protocol
+        .replace(/javascript:[^"']*/gi, '')
+        // Remove data: protocol for images (potential XSS vector)
+        .replace(/data:[^"']*/gi, '');
+    
+    // Second pass: comprehensive tag removal
+    sanitized = sanitized
+        // Remove any remaining HTML tags
+        .replace(/<[^>]*>/g, '')
+        // Decode common HTML entities
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#x27;/g, "'")
+        .replace(/&#x2F;/g, '/')
+        // Remove any remaining < or > characters that might be part of malformed tags
+        .replace(/[<>]/g, '');
+    
+    return sanitized.trim();
+};
+
 // Interface para output de mídia do Twitter
 export interface TwitterMediaOutput {
     tweets: Array<{
@@ -147,9 +182,10 @@ function parseNitterHTML(html: string, mediaType: 'photos' | 'videos' | 'all', u
             }
             
             if (media.length > 0 || mediaType === 'all') {
-                // Extrair texto básico
+                // Extrair texto básico com sanitização segura
                 const textMatch = tweetContent.match(/<p[^>]*>([\s\S]*?)<\/p>/);
-                const text = textMatch ? textMatch[1].replace(/<[^>]*>/g, '').trim() : '';
+                const rawText = textMatch ? textMatch[1] : '';
+                const text = sanitizeHTML(rawText);
                 
                 tweets.push({
                     id: `nitter_${tweetId}`,
