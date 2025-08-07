@@ -3,6 +3,7 @@
  * Usado como fallback quando APIs principais falharem
  */
 
+import sanitizeHtml from 'sanitize-html';
 // Interface para output de mídia do Twitter
 export interface TwitterMediaOutput {
     tweets: Array<{
@@ -149,7 +150,7 @@ function parseNitterHTML(html: string, mediaType: 'photos' | 'videos' | 'all', u
             if (media.length > 0 || mediaType === 'all') {
                 // Extrair texto básico
                 const textMatch = tweetContent.match(/<p[^>]*>([\s\S]*?)<\/p>/);
-                const text = textMatch ? textMatch[1].replace(/<[^>]*>/g, '').trim() : '';
+                const text = textMatch ? sanitizeHtml(textMatch[1], { allowedTags: [], allowedAttributes: {} }).trim() : '';
                 
                 tweets.push({
                     id: `nitter_${tweetId}`,
