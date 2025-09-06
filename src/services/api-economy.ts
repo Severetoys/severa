@@ -1,4 +1,11 @@
-import { TwitterMediaOutput } from '../ai/flows/twitter-flow-new';
+// import { TwitterMediaOutput } from '../ai/flows/twitter-flow-new';
+
+// Mock type definition for missing import
+interface TwitterMediaOutput {
+  media_key: string;
+  type: string;
+  url?: string;
+}
 
 // Configuração ultra-agressiva para economia de API
 export const API_ECONOMY_CONFIG = {

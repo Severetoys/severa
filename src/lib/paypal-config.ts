@@ -1,10 +1,10 @@
 // Configurações do PayPal SDK
 export const PAYPAL_CONFIG = {
-  // Client ID - usando suas credenciais reais do PayPal
-  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'AXykIWKfbbsR_Qe4eLrDgxudUWcoFn-cihQdgWJTqEOVQiP5fxXln-C5fr1QABQ4jowP7Oz2nkNtPFie',
+  // Client ID - usando credenciais do ambiente
+  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
   
-  // Email do PayPal para doações/pagamentos
-  businessEmail: process.env.NEXT_PUBLIC_PAYPAL_BUSINESS_EMAIL || 'pix@italosantos.com',
+  // Email do PayPal para doações/pagamentos  
+  businessEmail: process.env.NEXT_PUBLIC_PAYPAL_BUSINESS_EMAIL || '',
   
   // Configurações padrão
   currency: 'BRL',
@@ -12,7 +12,7 @@ export const PAYPAL_CONFIG = {
   
   // Opções do script PayPal
   scriptOptions: {
-    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
     currency: 'BRL',
     intent: 'capture' as const,
     components: 'buttons',
