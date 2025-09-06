@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminApp } from '@/lib/firebase-admin';
-import { getStorage } from 'firebase-admin/storage';
+import { adminApp, getStorage } from '@/lib/firebase-admin';
 import { checkUserSubscriptionInternal } from '@/lib/subscription-check';
 
 export async function GET(request: NextRequest) {

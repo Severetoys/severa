@@ -1,5 +1,4 @@
-import { adminApp } from '@/lib/firebase-admin';
-import { getDatabase } from 'firebase-admin/database';
+import { adminApp, getDatabase } from '@/lib/firebase-admin';
 
 export interface SubscriptionPlan {
   id: string;
